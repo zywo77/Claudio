@@ -1,0 +1,634 @@
+[
+  {
+    "tag": "Mandopop",
+    "count": 1390
+  },
+  {
+    "tag": "Western",
+    "count": 777
+  },
+  {
+    "tag": "Pop",
+    "count": 757
+  },
+  {
+    "tag": "Ballad",
+    "count": 353
+  },
+  {
+    "tag": "Chill",
+    "count": 256
+  },
+  {
+    "tag": "Romantic",
+    "count": 235
+  },
+  {
+    "tag": "R&B",
+    "count": 235
+  },
+  {
+    "tag": "Hip-Hop",
+    "count": 223
+  },
+  {
+    "tag": "Lazy",
+    "count": 220
+  },
+  {
+    "tag": "Ambient",
+    "count": 178
+  },
+  {
+    "tag": "Happy",
+    "count": 172
+  },
+  {
+    "tag": "Indie Pop",
+    "count": 119
+  },
+  {
+    "tag": "Art Pop",
+    "count": 103
+  },
+  {
+    "tag": "Rap",
+    "count": 103
+  },
+  {
+    "tag": "Chinese Traditional",
+    "count": 101
+  },
+  {
+    "tag": "Electronic",
+    "count": 101
+  },
+  {
+    "tag": "Indie Folk",
+    "count": 93
+  },
+  {
+    "tag": "Dance Pop",
+    "count": 87
+  },
+  {
+    "tag": "Folk",
+    "count": 87
+  },
+  {
+    "tag": "Night",
+    "count": 80
+  },
+  {
+    "tag": "Trap",
+    "count": 74
+  },
+  {
+    "tag": "Dreamy",
+    "count": 74
+  },
+  {
+    "tag": "Singer-Songwriter",
+    "count": 71
+  },
+  {
+    "tag": "Cantopop",
+    "count": 69
+  },
+  {
+    "tag": "Nature",
+    "count": 69
+  },
+  {
+    "tag": "Sad",
+    "count": 65
+  },
+  {
+    "tag": "Soundtrack",
+    "count": 60
+  },
+  {
+    "tag": "Soul",
+    "count": 57
+  },
+  {
+    "tag": "Ancient",
+    "count": 52
+  },
+  {
+    "tag": "Lo-Fi",
+    "count": 52
+  },
+  {
+    "tag": "Synth Pop",
+    "count": 49
+  },
+  {
+    "tag": "Game Music",
+    "count": 44
+  },
+  {
+    "tag": "Short",
+    "count": 44
+  },
+  {
+    "tag": "Instrumental",
+    "count": 42
+  },
+  {
+    "tag": "Country Pop",
+    "count": 40
+  },
+  {
+    "tag": "Rock",
+    "count": 39
+  },
+  {
+    "tag": "Dream Pop",
+    "count": 38
+  },
+  {
+    "tag": "Summer",
+    "count": 37
+  },
+  {
+    "tag": "Electropop",
+    "count": 36
+  },
+  {
+    "tag": "Emo Rap",
+    "count": 33
+  },
+  {
+    "tag": "J-Pop",
+    "count": 32
+  },
+  {
+    "tag": "Melodic Rap",
+    "count": 32
+  },
+  {
+    "tag": "Fresh",
+    "count": 31
+  },
+  {
+    "tag": "Folk Pop",
+    "count": 28
+  },
+  {
+    "tag": "Indie Rock",
+    "count": 27
+  },
+  {
+    "tag": "Alternative Rock",
+    "count": 26
+  },
+  {
+    "tag": "Pop Rock",
+    "count": 24
+  },
+  {
+    "tag": "K-Pop",
+    "count": 24
+  },
+  {
+    "tag": "Neo Soul",
+    "count": 24
+  },
+  {
+    "tag": "Travel",
+    "count": 23
+  },
+  {
+    "tag": "Freedom",
+    "count": 23
+  },
+  {
+    "tag": "Long",
+    "count": 22
+  },
+  {
+    "tag": "Youth",
+    "count": 21
+  },
+  {
+    "tag": "Campus",
+    "count": 21
+  },
+  {
+    "tag": "Jazz",
+    "count": 21
+  },
+  {
+    "tag": "Rainy",
+    "count": 20
+  },
+  {
+    "tag": "Folk Rock",
+    "count": 20
+  },
+  {
+    "tag": "EDM",
+    "count": 19
+  },
+  {
+    "tag": "Live",
+    "count": 18
+  },
+  {
+    "tag": "Performance",
+    "count": 18
+  },
+  {
+    "tag": "Winter",
+    "count": 17
+  },
+  {
+    "tag": "Warm",
+    "count": 17
+  },
+  {
+    "tag": "Cosmic",
+    "count": 17
+  },
+  {
+    "tag": "Classic",
+    "count": 17
+  },
+  {
+    "tag": "Pop Punk",
+    "count": 17
+  },
+  {
+    "tag": "Bedroom Pop",
+    "count": 16
+  },
+  {
+    "tag": "Alternative R&B",
+    "count": 16
+  },
+  {
+    "tag": "Farewell",
+    "count": 15
+  },
+  {
+    "tag": "Nostalgic",
+    "count": 14
+  },
+  {
+    "tag": "Home",
+    "count": 14
+  },
+  {
+    "tag": "Country",
+    "count": 13
+  },
+  {
+    "tag": "Future Bass",
+    "count": 13
+  },
+  {
+    "tag": "Motivational",
+    "count": 12
+  },
+  {
+    "tag": "Experimental",
+    "count": 12
+  },
+  {
+    "tag": "Emo",
+    "count": 12
+  },
+  {
+    "tag": "Post-Rock",
+    "count": 12
+  },
+  {
+    "tag": "Inspirational",
+    "count": 11
+  },
+  {
+    "tag": "Pop Rap",
+    "count": 11
+  },
+  {
+    "tag": "Urban Folk",
+    "count": 11
+  },
+  {
+    "tag": "Shoegaze",
+    "count": 11
+  },
+  {
+    "tag": "Gospel",
+    "count": 10
+  },
+  {
+    "tag": "Solitude",
+    "count": 9
+  },
+  {
+    "tag": "Calm",
+    "count": 9
+  },
+  {
+    "tag": "Hardcore Rap",
+    "count": 9
+  },
+  {
+    "tag": "Alternative Pop",
+    "count": 9
+  },
+  {
+    "tag": "Musical",
+    "count": 9
+  },
+  {
+    "tag": "Piano Pop",
+    "count": 9
+  },
+  {
+    "tag": "Experimental Pop",
+    "count": 9
+  },
+  {
+    "tag": "Network",
+    "count": 8
+  },
+  {
+    "tag": "Retro Pop",
+    "count": 8
+  },
+  {
+    "tag": "Life",
+    "count": 7
+  },
+  {
+    "tag": "Dance",
+    "count": 7
+  },
+  {
+    "tag": "Party",
+    "count": 7
+  },
+  {
+    "tag": "Asian Hip-Hop",
+    "count": 6
+  },
+  {
+    "tag": "Comedy",
+    "count": 6
+  },
+  {
+    "tag": "Power Pop",
+    "count": 6
+  },
+  {
+    "tag": "Art Rock",
+    "count": 6
+  },
+  {
+    "tag": "Melancholy",
+    "count": 6
+  },
+  {
+    "tag": "Production",
+    "count": 6
+  },
+  {
+    "tag": "Indie",
+    "count": 6
+  },
+  {
+    "tag": "Cute",
+    "count": 5
+  },
+  {
+    "tag": "Guitar",
+    "count": 5
+  },
+  {
+    "tag": "Holiday",
+    "count": 5
+  },
+  {
+    "tag": "Festive",
+    "count": 5
+  },
+  {
+    "tag": "Drill",
+    "count": 5
+  },
+  {
+    "tag": "Electronic Rock",
+    "count": 4
+  },
+  {
+    "tag": "Funk",
+    "count": 4
+  },
+  {
+    "tag": "Cover",
+    "count": 4
+  },
+  {
+    "tag": "Bubblegum Pop",
+    "count": 3
+  },
+  {
+    "tag": "Vocaloid",
+    "count": 3
+  },
+  {
+    "tag": "Melodic Dubstep",
+    "count": 3
+  },
+  {
+    "tag": "Garage Rock",
+    "count": 3
+  },
+  {
+    "tag": "Classical",
+    "count": 3
+  },
+  {
+    "tag": "Trance",
+    "count": 3
+  },
+  {
+    "tag": "Progressive House",
+    "count": 3
+  },
+  {
+    "tag": "Post-Punk",
+    "count": 3
+  },
+  {
+    "tag": "Comedy Rap",
+    "count": 3
+  },
+  {
+    "tag": "Experimental Rap",
+    "count": 3
+  },
+  {
+    "tag": "Punk Rap",
+    "count": 3
+  },
+  {
+    "tag": "Bossa Nova",
+    "count": 2
+  },
+  {
+    "tag": "Classic Country",
+    "count": 2
+  },
+  {
+    "tag": "Urban",
+    "count": 2
+  },
+  {
+    "tag": "Hyperpop",
+    "count": 2
+  },
+  {
+    "tag": "Earth",
+    "count": 2
+  },
+  {
+    "tag": "West Coast Hip-Hop",
+    "count": 2
+  },
+  {
+    "tag": "Gospel Rap",
+    "count": 2
+  },
+  {
+    "tag": "Alternative Hip-Hop",
+    "count": 2
+  },
+  {
+    "tag": "Broadway",
+    "count": 1
+  },
+  {
+    "tag": "Country Rock",
+    "count": 1
+  },
+  {
+    "tag": "Americana",
+    "count": 1
+  },
+  {
+    "tag": "Baroque Pop",
+    "count": 1
+  },
+  {
+    "tag": "Punk",
+    "count": 1
+  },
+  {
+    "tag": "New Wave",
+    "count": 1
+  },
+  {
+    "tag": "Tropical House",
+    "count": 1
+  },
+  {
+    "tag": "Deep House",
+    "count": 1
+  },
+  {
+    "tag": "Eurodance",
+    "count": 1
+  },
+  {
+    "tag": "Bass Music",
+    "count": 1
+  },
+  {
+    "tag": "New Age",
+    "count": 1
+  },
+  {
+    "tag": "Celtic",
+    "count": 1
+  },
+  {
+    "tag": "Latin Pop",
+    "count": 1
+  },
+  {
+    "tag": "Reggaeton",
+    "count": 1
+  },
+  {
+    "tag": "Indie Electronic",
+    "count": 1
+  },
+  {
+    "tag": "Alternative",
+    "count": 1
+  },
+  {
+    "tag": "Doo-Wop",
+    "count": 1
+  },
+  {
+    "tag": "G-Funk",
+    "count": 1
+  },
+  {
+    "tag": "Country Rap",
+    "count": 1
+  },
+  {
+    "tag": "Auto-Tune",
+    "count": 1
+  },
+  {
+    "tag": "Boy Band",
+    "count": 1
+  },
+  {
+    "tag": "Funk Rock",
+    "count": 1
+  },
+  {
+    "tag": "Grime",
+    "count": 1
+  },
+  {
+    "tag": "UK Rap",
+    "count": 1
+  },
+  {
+    "tag": "Dark Pop",
+    "count": 1
+  },
+  {
+    "tag": "Piano",
+    "count": 1
+  },
+  {
+    "tag": "Big Room",
+    "count": 1
+  },
+  {
+    "tag": "Latin Trap",
+    "count": 1
+  },
+  {
+    "tag": "90s Rock",
+    "count": 1
+  },
+  {
+    "tag": "Christian Hip-Hop",
+    "count": 1
+  },
+  {
+    "tag": "Political Rap",
+    "count": 1
+  }
+]

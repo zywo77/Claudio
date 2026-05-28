@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Claudio">
+  <link rel="apple-touch-icon" href="mike.jpg">
+  <title>Claudio — AI Radio</title>
+  <link rel="stylesheet" href="/fonts/ibm-plex-mono/400.css">
+  <link rel="stylesheet" href="/fonts/ibm-plex-mono/700.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0D0D0D">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- ═══ 全局最外层容器 ═══ -->
+  <div class="radio-screen-container">
+
+    <!-- ═══ 上半部分：沉浸式电台区 ═══ -->
+    <section class="upper-player-zone">
+
+      <!-- ① 页面头部栏 -->
+      <div class="page-header">
+        <div class="header-left">
+          <img src="mike.jpg" alt="Claudio" class="logo-avatar">
+          <span class="logo">Claudio</span>
+        </div>
+        <div class="header-right">
+          <button class="header-btn" id="btn-login">LOGIN</button>
+          <div class="theme-toggle" id="theme-toggle">
+            <span class="theme-opt active" data-mode="dark">DARK</span>
+            <span class="theme-opt" data-mode="light">LIGHT</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ② 巨型点阵时钟 -->
+      <div class="clock-section">
+        <div class="time" id="clock">--:--</div>
+      </div>
+
+      <!-- ③ 电台元数据状态块 -->
+      <div class="station-metadata">
+        <div class="day-info" id="day-info">----</div>
+        <div class="date-info" id="date-info">----</div>
+        <div class="status-tag">
+          <span class="status-dot"></span>
+          <span id="status-text">ON AIR</span>
+        </div>
+      </div>
+
+      <!-- ④ 工业风播放器控制条 -->
+      <div class="player-control-bar">
+        <!-- 顶部：频谱 + 歌曲信息 -->
+        <div class="player-top-row">
+          <div class="eq-bars" id="eq-bars">
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+          </div>
+          <div class="player-info">
+            <h3 id="track-title">-</h3>
+            <p id="track-artist">—</p>
+          </div>
+          <div class="player-controls">
+            <button class="ctrl-btn" id="btn-prev" title="Previous">⏮</button>
+            <button class="ctrl-btn ctrl-play" id="btn-play" title="Play/Pause">▶</button>
+            <button class="ctrl-btn" id="btn-next" title="Next">⏭</button>
+            <button class="ctrl-btn" id="btn-stop" title="Stop">⏹</button>
+            <button class="ctrl-btn ctrl-heart" id="btn-heart" title="Favorite">♡</button>
+          </div>
+          <div class="player-right-controls">
+            <span class="ctrl-label" id="btn-list">LIST</span>
+            <span class="ctrl-label" id="btn-fav">FAV</span>
+            <div class="vol-group">
+              <span class="vol-label">VOL</span>
+              <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="80">
+            </div>
+          </div>
+        </div>
+        <!-- 底部：进度条 -->
+        <div class="player-progress-row">
+          <span class="progress-time" id="time-current">0:00</span>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+          <span class="progress-time" id="time-total">0:00</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ═══ 中间核心全黑分隔条 ═══ -->
+    <div class="queue-status-bar">
+      <span class="queue-label">QUEUE</span>
+      <span class="queue-count" id="queue-count">0 TRACKS</span>
+    </div>
+
+    <!-- ═══ Queue Dropdown Panels ═══ -->
+    <div class="queue-panel" id="panel-list">
+      <div class="queue-panel-header">
+        <span class="queue-panel-title">RECENTLY PLAYED</span>
+      </div>
+      <div class="queue-panel-body" id="panel-list-body"></div>
+    </div>
+
+    <div class="queue-panel" id="panel-fav">
+      <div class="queue-panel-header">
+        <span class="queue-panel-title">FAVORITES</span>
+      </div>
+      <div class="queue-panel-body" id="panel-fav-body"></div>
+    </div>
+
+    <!-- ① 当前频道状态行 -->
+    <div class="channel-status">
+      <div class="channel-left">
+        <span class="status-dot"></span>
+        <span class="channel-name">Claudio</span>
+      </div>
+      <span class="channel-live">LIVE</span>
+    </div>
+
+    <!-- ═══ 下半部分：多维对话与电台交互区 ═══ -->
+    <section class="lower-stream-zone">
+
+      <!-- ② 状态连接提示 -->
+      <div class="connection-text">Connected to Claudio server</div>
+
+      <!-- ③ 滚动对话历史流 -->
+      <div class="chat-history" id="chat-window"></div>
+
+    </section>
+
+    <!-- ⑤ 底部输入交互栏 -->
+    <div class="input-bar">
+      <input id="input" type="text" placeholder="Say something to the DJ..." autocomplete="off" spellcheck="false">
+      <button class="mic-btn" id="mic-btn" title="Voice">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="23"/>
+          <line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
+      </button>
+      <button class="send-btn" id="send-btn" title="Send">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- ⑥ 全站页脚栏 -->
+    <div class="site-footer">
+      <span class="footer-brand">CLAUDIO FM</span>
+      <span class="footer-status">CONNECTED</span>
+    </div>
+
+  </div>
+
+  <!-- ═══ Replay Overlay ═══ -->
+  <div class="replay-overlay" id="replay-overlay">
+    <div class="replay-header">
+      <span class="replay-speaking" id="replay-speaking">• Speaking...</span>
+      <span class="replay-tts-dur" id="replay-tts-dur">—</span>
+    </div>
+    <canvas id="replay-waveform" class="replay-waveform"></canvas>
+    <div class="replay-card" id="replay-card">
+      <button class="replay-close" id="replay-close">✕</button>
+      <div class="replay-title-area">
+        <h2 class="replay-theme" id="replay-theme">—</h2>
+        <p class="replay-meta" id="replay-meta">—</p>
+      </div>
+      <div class="replay-mini-controls">
+        <button class="replay-play-btn" id="replay-play-btn">▶</button>
+        <div class="replay-mini-progress">
+          <div class="replay-mini-fill" id="replay-mini-fill"></div>
+        </div>
+        <span class="replay-mini-time" id="replay-mini-time">0:00 / 0:00</span>
+      </div>
+      <div class="replay-transcript-card">
+        <div class="replay-transcript" id="replay-transcript"></div>
+      </div>
+      <div class="replay-bottom-bar">
+        <span class="replay-bottom-time" id="replay-bottom-time">0:00</span>
+        <canvas id="replay-bottom-waveform" class="replay-bottom-waveform"></canvas>
+        <button class="replay-bottom-pause" id="replay-bottom-pause">❚❚</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden Audio -->
+  <audio id="audio" preload="auto" crossorigin="anonymous"></audio>
+
+  <script src="stream.js"></script>
+  <script src="ProfileOverlay.js"></script>
+  <script>
+    // ═══════════════════════════════════════
+    //  Clock
+    // ═══════════════════════════════════════
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('clock').textContent = `${h}:${m}`;
+      const days = ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
+      const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+      document.getElementById('day-info').textContent = days[now.getDay()];
+      document.getElementById('date-info').textContent = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // ═══════════════════════════════════════
+    //  DOM refs
+    // ═══════════════════════════════════════
+    const $input        = document.getElementById('input');
+    const $sendBtn      = document.getElementById('send-btn');
+    const $chatWindow   = document.getElementById('chat-window');
+    const $themeToggle  = document.getElementById('theme-toggle');
+    const $trackTitle   = document.getElementById('track-title');
+    const $trackArtist  = document.getElementById('track-artist');
+    const $progressFill = document.getElementById('progress-fill');
+    const $timeCurrent  = document.getElementById('time-current');
+    const $timeTotal    = document.getElementById('time-total');
+    const $audio        = document.getElementById('audio');
+    const $micBtn       = document.getElementById('mic-btn');
+    const $eqBars       = document.getElementById('eq-bars');
+    const $controlBar   = document.querySelector('.player-control-bar');
+    const $btnPlay      = document.getElementById('btn-play');
+    const $btnPrev      = document.getElementById('btn-prev');
+    const $btnNext      = document.getElementById('btn-next');
+    const $btnHeart     = document.getElementById('btn-heart');
+    const $btnStop      = document.getElementById('btn-stop');
+    const $btnList      = document.getElementById('btn-list');
+    const $btnFav       = document.getElementById('btn-fav');
+    const $volumeSlider = document.getElementById('volume-slider');
+    const $panelList    = document.getElementById('panel-list');
+    const $panelFav     = document.getElementById('panel-fav');
+    const $panelListBody= document.getElementById('panel-list-body');
+    const $panelFavBody = document.getElementById('panel-fav-body');
+    const $overlay       = document.getElementById('replay-overlay');
+    const $card          = document.getElementById('replay-card');
+    const $closeBtn      = document.getElementById('replay-close');
+    const $theme         = document.getElementById('replay-theme');
+    const $meta          = document.getElementById('replay-meta');
+    const $speaking      = document.getElementById('replay-speaking');
+    const $ttsDur        = document.getElementById('replay-tts-dur');
+    const $playBtn       = document.getElementById('replay-play-btn');
+    const $miniFill      = document.getElementById('replay-mini-fill');
+    const $miniTime      = document.getElementById('replay-mini-time');
+    const $transcript    = document.getElementById('replay-transcript');
+    const $bottomTime    = document.getElementById('replay-bottom-time');
+    const $bottomPause   = document.getElementById('replay-bottom-pause');
+    const $queueCount    = document.getElementById('queue-count');
+
+    const stream = window.claudioStream;
+
+    // Profile overlay: click header avatar to open
+    document.querySelector('.logo-avatar').addEventListener('click', (e) => {
+      ProfileOverlay.open(e);
+    });
+
+    // Bind stream to audio element
+    stream.bind({ audio: $audio });
+
+    // ═══════════════════════════════════════
+    //  Favorites & Recent Plays
+    // ═══════════════════════════════════════
+    const _rawFavs = JSON.parse(localStorage.getItem('claudio-favs') || '{}');
+    // Migrate old Set-based array to object format
+    const favorites = Array.isArray(_rawFavs) ? {} : _rawFavs;
+    const recentPlays = JSON.parse(localStorage.getItem('claudio-recent') || '[]');
+
+    function saveFavorites() {
+      localStorage.setItem('claudio-favs', JSON.stringify(favorites));
+    }
+
+    function saveRecent() {
+      localStorage.setItem('claudio-recent', JSON.stringify(recentPlays));
+    }
+
+    function addToRecent(track) {
+      const key = track.title + '|||' + track.artist;
+      const idx = recentPlays.findIndex(r => r.key === key);
+      if (idx !== -1) recentPlays.splice(idx, 1);
+      recentPlays.unshift({ key, title: track.title, artist: track.artist, url: track.url, album: track.album || '', id: track.id || '' });
+      if (recentPlays.length > 50) recentPlays.length = 50;
+      saveRecent();
+    }
+
+    function isFav(track) {
+      if (!track) return false;
+      return favorites[track.title + '|||' + track.artist] !== undefined;
+    }
+
+    function toggleFav(track) {
+      if (!track) return;
+      const key = track.title + '|||' + track.artist;
+      if (favorites[key]) delete favorites[key];
+      else favorites[key] = { title: track.title, artist: track.artist, url: track.url, album: track.album || '', id: track.id || '' };
+      saveFavorites();
+      updateHeartUI();
+      refreshFavPanel();
+    }
+
+    function updateHeartUI() {
+      const fav = isFav(playerState.currentTrack);
+      $btnHeart.textContent = fav ? '♥' : '♡';
+      $btnHeart.classList.toggle('heart-active', fav);
+      // 同步所有星星图标
+      document.querySelectorAll('.mc-icon').forEach(icon => {
+        const card = icon.closest('.mc-card');
+        if (!card) return;
+        const title = card.querySelector('.mc-title')?.textContent;
+        const artist = card.querySelector('.mc-artist')?.textContent;
+        if (!title) return;
+        const isFavTrack = favorites[title + '|||' + (artist || '')] !== undefined;
+        icon.textContent = isFavTrack ? '★' : '☆';
+        icon.classList.toggle('mc-fav', isFavTrack);
+      });
+      document.querySelectorAll('.panel-track-icon').forEach(icon => {
+        const item = icon.closest('.panel-track');
+        if (!item) return;
+        const title = item.querySelector('.panel-track-title')?.textContent;
+        const artist = item.querySelector('.panel-track-artist')?.textContent;
+        if (!title) return;
+        const isFavTrack = favorites[title + '|||' + (artist || '')] !== undefined;
+        icon.textContent = isFavTrack ? '★' : '☆';
+        icon.classList.toggle('panel-star-active', isFavTrack);
+      });
+    }
+
+    // ═══════════════════════════════════════
+    //  Toast notification
+    // ═══════════════════════════════════════
+    function showToast(msg, duration = 2500) {
+      let el = document.getElementById('toast-msg');
+      if (!el) {
+        el = document.createElement('div');
+        el.id = 'toast-msg';
+        el.style.cssText = 'position:fixed;bottom:120px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.75);color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;z-index:9999;pointer-events:none;opacity:0;transition:opacity .3s;max-width:80vw;text-align:center;';
+        document.body.appendChild(el);
+      }
+      el.textContent = msg;
+      el.style.opacity = '1';
+      clearTimeout(el._timer);
+      el._timer = setTimeout(() => { el.style.opacity = '0'; }, duration);
+    }
+
+    // ═══════════════════════════════════════
+    //  Player State (global)
+    // ═══════════════════════════════════════
+    const playerState = {
+      playing: false,
+      currentTrack: null,
+      queue: [],
+
+      play(track) {
+        if (track) {
+          this.currentTrack = track;
+          $trackTitle.textContent = track.title || '[ unknown ]';
+          $trackArtist.textContent = track.artist || '—';
+          if (track.url) $audio.src = track.url;
+          addToRecent(track);
+          updateHeartUI();
+        }
+        if (!this.currentTrack) return;
+        try { $audio.play().catch(() => {}); } catch {}
+        this.playing = true;
+        $btnPlay.textContent = '⏸';
+        $eqBars.classList.add('eq-playing');
+        $controlBar.classList.add('playing');
+      },
+
+      pause() {
+        $audio.pause();
+        this.playing = false;
+        $btnPlay.textContent = '▶';
+        $eqBars.classList.remove('eq-playing');
+        $controlBar.classList.remove('playing');
+      },
+
+      toggle() {
+        if (this.playing) this.pause();
+        else this.play();
+      },
+
+      next() {
+        if (this.queue.length > 0) {
+          const next = this.queue.shift();
+          this.play(next);
+          updateQueueCount();
+        }
+      },
+
+      prev() {
+        if (this.currentTrack) {
+          $audio.currentTime = 0;
+          this.play();
+        }
+      }
+    };
+
+    // Expose globally for stream.js card clicks
+    window.playerState = playerState;
+
+    // Update queue track count display
+    function updateQueueCount() {
+      const n = playerState.queue.length;
+      $queueCount.textContent = `${n} TRACK${n !== 1 ? 'S' : ''}`;
+    }
+
+    // ═══════════════════════════════════════
+    //  Web Audio API — for replay overlay
+    // ═══════════════════════════════════════
+    let audioCtx, analyser, spectrumInit = false;
+
+    $audio.addEventListener('play', () => {
+      if (!spectrumInit) {
+        try {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          const source = audioCtx.createMediaElementSource($audio);
+          analyser = audioCtx.createAnalyser();
+          analyser.fftSize = 256;
+          source.connect(analyser);
+          analyser.connect(audioCtx.destination);
+          spectrumInit = true;
+        } catch (e) {
+          console.warn('Web Audio init failed:', e);
+        }
+      }
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    });
+
+    // ═══════════════════════════════════════
+    //  Player Controls
+    // ═══════════════════════════════════════
+    $btnPlay.addEventListener('click', () => playerState.toggle());
+    $btnHeart.addEventListener('click', () => toggleFav(playerState.currentTrack));
+    $btnNext.addEventListener('click', () => playerState.next());
+    $btnPrev.addEventListener('click', () => playerState.prev());
+    $btnStop.addEventListener('click', () => {
+      $audio.pause();
+      $audio.currentTime = 0;
+      $btnPlay.textContent = '▶';
+      $controlBar.classList.remove('playing');
+      $eqBars.classList.remove('eq-playing');
+    });
+
+    $volumeSlider.addEventListener('input', () => {
+      $audio.volume = $volumeSlider.value / 100;
+    });
+    $audio.volume = 0.8;
+
+    function fmtTime(sec) {
+      if (!sec || isNaN(sec)) return '0:00';
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return `${m}:${String(s).padStart(2, '0')}`;
+    }
+
+    $audio.addEventListener('timeupdate', () => {
+      if ($audio.duration) {
+        $progressFill.style.width = ($audio.currentTime / $audio.duration * 100) + '%';
+        $timeCurrent.textContent = fmtTime($audio.currentTime);
+        $timeTotal.textContent = fmtTime($audio.duration);
+      }
+    });
+
+    $audio.addEventListener('ended', () => {
+      $progressFill.style.width = '0%';
+      playerState.playing = false;
+      $btnPlay.textContent = '▶';
+      $eqBars.classList.remove('eq-playing');
+      $controlBar.classList.remove('playing');
+      if (!rOverlayOpen) playerState.next();
+    });
+
+    // ═══════════════════════════════════════
+    //  Queue Panels (LIST / FAV)
+    // ═══════════════════════════════════════
+    let activePanel = null;
+
+    function togglePanel(panelId) {
+      const panel = document.getElementById(panelId);
+      if (activePanel === panelId) {
+        panel.classList.remove('open');
+        activePanel = null;
+      } else {
+        if (activePanel) document.getElementById(activePanel).classList.remove('open');
+        panel.classList.add('open');
+        activePanel = panelId;
+        if (panelId === 'panel-list') refreshListPanel();
+        if (panelId === 'panel-fav') refreshFavPanel();
+      }
+    }
+
+    $btnList.addEventListener('click', () => togglePanel('panel-list'));
+    $btnFav.addEventListener('click', () => togglePanel('panel-fav'));
+
+    function renderPanelTrack(bodyEl, track, isFavTrack) {
+      const item = document.createElement('div');
+      item.className = 'panel-track';
+
+      const icon = document.createElement('div');
+      icon.className = 'panel-track-icon';
+      if (isFavTrack !== undefined) {
+        icon.textContent = isFavTrack ? '★' : '☆';
+        icon.classList.toggle('panel-star-active', isFavTrack);
+        icon.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleFav(track);
+          const nowFav = isFav(track);
+          icon.textContent = nowFav ? '★' : '☆';
+          icon.classList.toggle('panel-star-active', nowFav);
+        });
+      } else {
+        icon.textContent = '▶';
+      }
+
+      const text = document.createElement('div');
+      text.className = 'panel-track-text';
+      const title = document.createElement('div');
+      title.className = 'panel-track-title';
+      title.textContent = track.title;
+      const artist = document.createElement('div');
+      artist.className = 'panel-track-artist';
+      artist.textContent = track.artist || '—';
+      text.appendChild(title);
+      text.appendChild(artist);
+
+      item.appendChild(icon);
+      item.appendChild(text);
+
+      item.addEventListener('click', async () => {
+        // 刷新 URL（网易云链接会过期）
+        try {
+          const resp = await fetch('/api/refresh-url', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title: track.title, artist: track.artist, id: track.id }),
+          });
+          const data = await resp.json();
+          if (data.success && data.url) {
+            track.url = data.url;
+            if (data.id) track.id = data.id;
+          } else {
+            showToast('This song is not available right now');
+            return;
+          }
+        } catch {
+          if (!track.url) {
+            showToast('This song is not available right now');
+            return;
+          }
+        }
+        playerState.play(track);
+      });
+
+      bodyEl.appendChild(item);
+    }
+
+    function refreshListPanel() {
+      $panelListBody.innerHTML = '';
+      if (recentPlays.length === 0) {
+        $panelListBody.innerHTML = '<div class="panel-empty">No recent plays</div>';
+        return;
+      }
+      recentPlays.slice(0, 50).forEach(r => {
+        renderPanelTrack($panelListBody, r);
+      });
+    }
+
+    function refreshFavPanel() {
+      $panelFavBody.innerHTML = '';
+      const keys = Object.keys(favorites);
+      if (keys.length === 0) {
+        $panelFavBody.innerHTML = '<div class="panel-empty">No favorites yet</div>';
+        return;
+      }
+      keys.forEach(key => {
+        const track = favorites[key];
+        renderPanelTrack($panelFavBody, track, true);
+      });
+    }
+
+    // ═══════════════════════════════════════
+    //  Inline Music Card List (in chat)
+    // ═══════════════════════════════════════
+    function renderMusicCardList(songs, parentEl) {
+      const list = document.createElement('div');
+      list.className = 'mc-list';
+
+      songs.forEach((s) => {
+        const track = {
+          title: s.name || s.title || '未知曲目',
+          artist: s.artist || s.ar?.map(a => a.name).join(' / ') || '未知艺人',
+          url: s.url || '',
+          cover: s.cover || s.al?.picUrl || '',
+          id: s.id || '',
+          duration: s.duration ? fmtTime(s.duration / 1000) : '',
+          album: s.album || s.al?.name || '',
+        };
+
+        const card = document.createElement('div');
+        card.className = 'mc-card';
+
+        const icon = document.createElement('div');
+        icon.className = 'mc-icon';
+        const favNow = isFav(track);
+        icon.textContent = favNow ? '★' : '▶';
+        icon.classList.toggle('mc-fav', favNow);
+
+        icon.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleFav(track);
+          const nowFav = isFav(track);
+          icon.textContent = nowFav ? '★' : '☆';
+          icon.classList.toggle('mc-fav', nowFav);
+          updateHeartUI();
+        });
+
+        const text = document.createElement('div');
+        text.className = 'mc-text';
+        const titleEl = document.createElement('div');
+        titleEl.className = 'mc-title';
+        titleEl.textContent = track.title;
+        const artistEl = document.createElement('div');
+        artistEl.className = 'mc-artist';
+        artistEl.textContent = track.artist;
+        text.appendChild(titleEl);
+        text.appendChild(artistEl);
+
+        card.appendChild(icon);
+        card.appendChild(text);
+
+        card.addEventListener('click', () => {
+          playerState.play(track);
+          list.querySelectorAll('.mc-card').forEach(c => c.classList.remove('mc-active'));
+          card.classList.add('mc-active');
+          // Change icon to star after playing
+          const fav = isFav(track);
+          icon.textContent = fav ? '★' : '☆';
+          icon.classList.toggle('mc-fav', fav);
+        });
+
+        if (playerState.currentTrack &&
+            playerState.currentTrack.title === track.title &&
+            playerState.currentTrack.artist === track.artist) {
+          card.classList.add('mc-active');
+          icon.textContent = favNow ? '★' : '☆';
+        }
+
+        list.appendChild(card);
+      });
+
+      parentEl.appendChild(list);
+      scrollChat();
+    }
+
+    // ═══════════════════════════════════════
+    //  Chat Messages
+    // ═══════════════════════════════════════
+    let sending = false;
+
+    function appendMsg(role, text) {
+      const wrapper = document.createElement('div');
+      wrapper.className = `message ${role}`;
+
+      if (role === 'tool') {
+        const el = document.createElement('div');
+        el.className = 'bubble-tool';
+        el.textContent = text;
+        wrapper.appendChild(el);
+        $chatWindow.appendChild(wrapper);
+        scrollChat();
+        return el;
+      }
+
+      // Avatar
+      const avatar = document.createElement('img');
+      avatar.className = 'chat-avatar';
+      avatar.src = role === 'user' ? 'miao.jpg' : 'mike.jpg';
+      avatar.alt = role === 'user' ? 'U' : 'C';
+
+      // Right side
+      const body = document.createElement('div');
+      body.className = 'msg-body';
+
+      // Name row
+      const nameRow = document.createElement('div');
+      nameRow.className = 'msg-name';
+      nameRow.textContent = role === 'user' ? 'YY' : 'CLAUDIO';
+
+      // Bubble
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      bubble.textContent = text;
+
+      // Bottom: time + replay
+      const bottom = document.createElement('div');
+      bottom.className = 'msg-bottom';
+      const timeSpan = document.createElement('span');
+      timeSpan.className = 'msg-time';
+      const now = new Date();
+      timeSpan.textContent = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+      bottom.appendChild(timeSpan);
+
+      body.appendChild(nameRow);
+      body.appendChild(bubble);
+      body.appendChild(bottom);
+
+      wrapper.appendChild(avatar);
+      wrapper.appendChild(body);
+      $chatWindow.appendChild(wrapper);
+      scrollChat();
+
+      return { wrapper, bubble, bottom, nameRow };
+    }
+
+    function scrollChat() {
+      const scrollEl = $chatWindow.closest('.lower-stream-zone') || $chatWindow;
+      scrollEl.scrollTop = scrollEl.scrollHeight;
+    }
+
+    // ═══════════════════════════════════════
+    //  Send Message
+    // ═══════════════════════════════════════
+    function sendMessage() {
+      const text = $input.value.trim();
+      if (!text || sending) return;
+
+      appendMsg('user', text);
+      const userText = text;
+      $input.value = '';
+      setSending(true);
+
+      const msg = appendMsg('assistant', '');
+      const $el = msg.bubble;
+      let charCount = 0;
+      let fullText = '';
+      let musicPlayed = false;
+
+      function showLoading(label) {
+        $el.innerHTML = `<span class="loading-dots"><span></span><span></span><span></span></span><span class="loading-label">${label}</span>`;
+        scrollChat();
+      }
+
+      showLoading('');
+
+      stream.send(text, {
+        onChar(ch) {
+          if (charCount === 0) $el.textContent = '';
+          charCount++;
+          fullText += ch;
+          $el.textContent += ch;
+          if (charCount % 16 === 0) scrollChat();
+        },
+        onToolCalls() { if (charCount === 0) showLoading(''); },
+        onToolResult() {},
+        onPlay(song) {
+          if (musicPlayed) return;
+          musicPlayed = true;
+          playerState.play(song);
+          if (song.allSongs && song.allSongs.length > 1) {
+            playerState.queue = song.allSongs.slice(1).map(s => ({
+              title: s.name || s.title || '未知',
+              artist: s.artist || s.ar?.map(a => a.name).join(' / ') || '未知',
+              cover: s.cover || s.al?.picUrl || '',
+              url: s.url || '',
+              id: s.id || '',
+              is_fav: s.is_fav || false,
+              duration: s.duration ? fmtTime(s.duration / 1000) : '',
+              album: s.album || s.al?.name || '',
+            }));
+            updateQueueCount();
+          }
+          if (song.allSongs && song.allSongs.length > 0) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'message assistant';
+            const avatar = document.createElement('img');
+            avatar.className = 'chat-avatar';
+            avatar.src = 'mike.jpg';
+            avatar.alt = 'C';
+            wrapper.appendChild(avatar);
+            $chatWindow.appendChild(wrapper);
+            renderMusicCardList(song.allSongs, wrapper);
+            // Now playing 提示（独立一行）
+            const np = document.createElement('div');
+            np.className = 'connection-text';
+            np.textContent = `Now playing: ${song.title} — ${song.artist || '—'}`;
+            $chatWindow.appendChild(np);
+          }
+          scrollChat();
+        },
+        onDone() {
+          if (charCount === 0) $el.textContent = '...';
+          scrollChat();
+          setSending(false);
+
+          if (fullText.length > 50) {
+            addReplayBtn(msg.bottom, userText, fullText);
+          }
+        },
+        onError(err) {
+          if (charCount === 0) $el.textContent = '';
+          appendMsg('tool', `ERROR: ${err}`);
+          setSending(false);
+        },
+      });
+    }
+
+    // ═══════════════════════════════════════
+    //  Replay Overlay (TTS + Karaoke)
+    // ═══════════════════════════════════════
+    let rAudio = null;
+    let rSyncAnimId = null;
+    let rAnalyser = null;
+    let rAudioCtx = null;
+    let rWords = [];
+    let rSentences = [];
+    let rLastActiveWord = -1;
+    let rLastActiveLine = -1;
+    let rAbort = null;
+    let rMode = 0;
+    let rPaused = false;
+    let rTtsText = '';
+    let rChatMsgs = [];
+    let rTrack = null;
+    let rFadeTimer = null;
+    let rSavedVolume = 0.8;
+    let rVolRestoreTimer = null;
+    let rOverlayOpen = false;
+    let rSongSyncId = null;
+
+    function stopReplay(restoreVolume) {
+      rOverlayOpen = false;
+      if (rSongSyncId) { cancelAnimationFrame(rSongSyncId); rSongSyncId = null; }
+      if (rWaveformAnimId) { cancelAnimationFrame(rWaveformAnimId); rWaveformAnimId = null; }
+      if (rAudio) { rAudio.pause(); rAudio = null; }
+      if (rSyncAnimId) { cancelAnimationFrame(rSyncAnimId); rSyncAnimId = null; }
+      if (rFadeTimer) { clearInterval(rFadeTimer); rFadeTimer = null; }
+      if (rVolRestoreTimer) { clearTimeout(rVolRestoreTimer); rVolRestoreTimer = null; }
+      if (rAbort) { rAbort.abort(); rAbort = null; }
+      rWords = [];
+      rSentences = [];
+      rLastActiveWord = -1;
+      rLastActiveLine = -1;
+      rMode = 0;
+      rPaused = false;
+      rTtsText = '';
+      rChatMsgs = [];
+      rTrack = null;
+      if (restoreVolume) fadeVolume(rSavedVolume, 600);
+    }
+
+    function fadeVolume(target, duration) {
+      if (rFadeTimer) clearInterval(rFadeTimer);
+      const start = $audio.volume;
+      const diff = target - start;
+      if (Math.abs(diff) < 0.01) { $audio.volume = target; return; }
+      const steps = Math.max(10, Math.round(duration / 30));
+      let step = 0;
+      rFadeTimer = setInterval(() => {
+        step++;
+        $audio.volume = start + diff * Math.min(1, step / steps);
+        if (step >= steps) {
+          clearInterval(rFadeTimer);
+          rFadeTimer = null;
+          $audio.volume = target;
+        }
+      }, duration / steps);
+    }
+
+    function fmtTimeReplay(sec) {
+      if (!sec || isNaN(sec)) return '0:00';
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return m + ':' + String(s).padStart(2, '0');
+    }
+
+    function openDetailModal(track, userText, assistantText) {
+      stopReplay(true);
+      $theme.textContent = track?.title || '—';
+      $meta.textContent = `${track?.artist || '—'}${track?.album ? ' — ' + track.album : ''}`;
+      $transcript.innerHTML = '';
+      $miniFill.style.width = '0%';
+      $miniTime.textContent = '0:00 / 0:00';
+      $bottomTime.textContent = '0:00';
+      $ttsDur.textContent = '—';
+      $playBtn.textContent = (!$audio.paused) ? '❚❚' : '▶';
+      $bottomPause.textContent = '❚❚';
+      $speaking.textContent = '• Speaking...';
+      $overlay.classList.add('open');
+      rOverlayOpen = true;
+
+      rTrack = track;
+      rTtsText = assistantText || '';
+      rChatMsgs = [];
+      if (userText) rChatMsgs.push({ role: 'user', text: userText });
+      if (assistantText) rChatMsgs.push({ role: 'assistant', text: assistantText });
+
+      rSavedVolume = $audio.volume;
+      if (playerState.playing && !$audio.paused) {
+        fadeVolume(0.12, 400);
+      }
+
+      startSongProgress();
+
+      rAbort = new AbortController();
+      const signal = rAbort.signal;
+
+      rMode = 0;
+      rBottomBars = null;
+      drawReplayEdgeWaveform();
+      drawBottomWaveform();
+
+      const chatMsgs = [];
+      if (userText) chatMsgs.push({ role: 'user', text: userText });
+      if (assistantText) chatMsgs.push({ role: 'assistant', text: assistantText });
+
+      if (chatMsgs.length === 0) {
+        $transcript.innerHTML = `<div class="ts-line active"><div class="ts-label"><span class="ts-who">Claudio</span></div><div class="ts-text">还没有对话记录，先和我聊聊吧。</div></div>`;
+        return;
+      }
+
+      const ttsText = assistantText || '';
+      if (!ttsText) {
+        renderChatTranscript(chatMsgs);
+        return;
+      }
+
+      renderChatTranscript(chatMsgs);
+
+      fetch('/api/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: ttsText }),
+        signal,
+      })
+        .then(r => r.json())
+        .then(({ audioBase64, words }) => {
+          if (signal.aborted || !audioBase64) return;
+          rWords = words;
+          renderChatTranscriptWithWords(chatMsgs, words);
+          return fetch(`data:audio/mp3;base64,${audioBase64}`).then(r => r.blob());
+        })
+        .then(blob => {
+          if (!blob || signal.aborted) return;
+          rAudio = new Audio(URL.createObjectURL(blob));
+          rAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          const src = rAudioCtx.createMediaElementSource(rAudio);
+          rAnalyser = rAudioCtx.createAnalyser();
+          rAnalyser.fftSize = 256;
+          src.connect(rAnalyser);
+          rAnalyser.connect(rAudioCtx.destination);
+
+          rAudio.play();
+          rMode = 1;
+          $bottomPause.textContent = '❚❚';
+          startSync();
+
+          rAudio.addEventListener('loadedmetadata', () => {
+            if (rAudio && rAudio.duration && isFinite(rAudio.duration)) {
+              $ttsDur.textContent = fmtTimeReplay(rAudio.duration);
+            }
+          }, { once: true });
+
+          rAudio.addEventListener('ended', () => {
+            if (rAudioCtx) { rAudioCtx.close().catch(() => {}); rAudioCtx = null; }
+            rAnalyser = null;
+            rWords = [];
+            rAudio = null;
+
+            $speaking.textContent = '• Now Playing';
+            rMode = 2;
+            rPaused = false;
+            $bottomPause.textContent = '▶';
+            fadeVolume(rSavedVolume, 600);
+
+            if ($audio.paused && track?.url) {
+              $audio.src = track.url;
+              $audio.currentTime = 0;
+              $audio.play().catch(() => {});
+            }
+            playerState.playing = true;
+            $btnPlay.textContent = '⏸';
+            $playBtn.textContent = '❚❚';
+          }, { once: true });
+        })
+        .catch(e => {
+          if (e.name === 'AbortError') return;
+          console.error('Replay TTS error:', e);
+        });
+    }
+
+    function renderChatTranscript(msgs) {
+      $transcript.innerHTML = '';
+      msgs.forEach((m, i) => {
+        const line = document.createElement('div');
+        line.className = 'ts-line' + (i === msgs.length - 1 ? ' active' : ' inactive');
+        const label = document.createElement('div');
+        label.className = 'ts-label';
+        label.innerHTML = `<span class="ts-who">${m.role === 'user' ? 'You' : 'Claudio'}</span>`;
+        const textEl = document.createElement('div');
+        textEl.className = 'ts-text';
+        textEl.textContent = m.text;
+        line.appendChild(label);
+        line.appendChild(textEl);
+        $transcript.appendChild(line);
+      });
+    }
+
+    function renderChatTranscriptWithWords(msgs, words) {
+      $transcript.innerHTML = '';
+      let wordIdx = 0;
+
+      msgs.forEach((m, i) => {
+        const line = document.createElement('div');
+        line.className = 'ts-line' + (i === msgs.length - 1 ? ' active' : ' inactive');
+        line.dataset.msgIdx = i;
+
+        const label = document.createElement('div');
+        label.className = 'ts-label';
+        label.innerHTML = `<span class="ts-who">${m.role === 'user' ? 'You' : 'Claudio'}</span>`;
+
+        const textEl = document.createElement('div');
+        textEl.className = 'ts-text';
+
+        if (m.role === 'assistant') {
+          let remaining = m.text;
+          const lineWordStart = wordIdx;
+          while (remaining && wordIdx < words.length) {
+            const w = words[wordIdx];
+            const idx = remaining.indexOf(w.text);
+            if (idx === -1) { wordIdx++; continue; }
+            if (idx > 0) textEl.appendChild(document.createTextNode(remaining.slice(0, idx)));
+            const span = document.createElement('span');
+            span.className = 'rword';
+            span.textContent = w.text;
+            span.dataset.idx = wordIdx;
+            textEl.appendChild(span);
+            remaining = remaining.slice(idx + w.text.length);
+            wordIdx++;
+          }
+          if (remaining) textEl.appendChild(document.createTextNode(remaining));
+          line.dataset.wordStart = lineWordStart;
+          line.dataset.wordEnd = wordIdx;
+        } else {
+          textEl.textContent = m.text;
+        }
+
+        line.appendChild(label);
+        line.appendChild(textEl);
+        $transcript.appendChild(line);
+      });
+    }
+
+    function startSongProgress() {
+      function tick() {
+        rSongSyncId = requestAnimationFrame(tick);
+        if (!rOverlayOpen) return;
+        if ($audio.duration) {
+          const pct = ($audio.currentTime / $audio.duration) * 100;
+          $miniFill.style.width = pct + '%';
+          $miniTime.textContent = `${fmtTimeReplay($audio.currentTime)} / ${fmtTimeReplay($audio.duration)}`;
+        }
+      }
+      tick();
+    }
+
+    function startSync() {
+      const wordEls = $transcript.querySelectorAll('.rword');
+      const lineEls = $transcript.querySelectorAll('.ts-line');
+
+      function tick() {
+        rSyncAnimId = requestAnimationFrame(tick);
+        if (!rAudio) return;
+
+        const curMs = rAudio.currentTime * 1000;
+
+        if (rAudio.duration) {
+          $bottomTime.textContent = fmtTimeReplay(rAudio.currentTime);
+        }
+        drawBottomWaveform();
+
+        let activeW = -1;
+        for (let i = 0; i < rWords.length; i++) {
+          if (curMs >= rWords[i].startMs && curMs < rWords[i].endMs) { activeW = i; break; }
+        }
+
+        let activeL = -1;
+        for (let i = 0; i < lineEls.length; i++) {
+          const ws = parseInt(lineEls[i].dataset.wordStart);
+          const we = parseInt(lineEls[i].dataset.wordEnd);
+          if (!isNaN(ws) && !isNaN(we) && activeW >= ws && activeW < we) {
+            activeL = i;
+            break;
+          }
+        }
+
+        if (activeL !== rLastActiveLine) {
+          lineEls.forEach((el, i) => {
+            el.classList.toggle('active', i === activeL);
+            el.classList.toggle('inactive', i !== activeL);
+          });
+          rLastActiveLine = activeL;
+          if (lineEls[activeL]) {
+            lineEls[activeL].scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }
+
+        if (activeW !== rLastActiveWord) {
+          wordEls.forEach(el => {
+            const idx = parseInt(el.dataset.idx);
+            el.classList.remove('rword-active', 'rword-past');
+            if (idx < activeW) el.classList.add('rword-past');
+            else if (idx === activeW) el.classList.add('rword-active');
+          });
+          rLastActiveWord = activeW;
+        }
+
+        if (rAudio.ended) {
+          rMode = 0;
+          cancelAnimationFrame(rSyncAnimId);
+          rSyncAnimId = null;
+          wordEls.forEach(el => {
+            el.classList.remove('rword-active');
+            el.classList.add('rword-past');
+          });
+          $bottomPause.textContent = '▶';
+          return;
+        }
+      }
+      tick();
+    }
+
+    // ═══════════════════════════════════════
+    //  Replay Edge Waveform
+    // ═══════════════════════════════════════
+    const $replayWaveform = document.getElementById('replay-waveform');
+    let rWaveformAnimId = null;
+    let rPeakEnv = null;
+    let rSmoothLevels = null;
+
+    function drawReplayEdgeWaveform() {
+      const canvas = $replayWaveform;
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) {
+        rWaveformAnimId = requestAnimationFrame(drawReplayEdgeWaveform);
+        return;
+      }
+      if (canvas.width !== Math.round(rect.width * dpr)) {
+        canvas.width = Math.round(rect.width * dpr);
+        canvas.height = Math.round(rect.height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      const W = rect.width;
+      const H = rect.height;
+      const barW = 2;
+      const gap = 1.5;
+      const barCount = Math.floor(W / (barW + gap));
+      const levels = new Float32Array(barCount);
+      const now = Date.now();
+
+      let hasFreq = false;
+      if (rMode === 1 && rAnalyser) {
+        const freq = new Uint8Array(rAnalyser.frequencyBinCount);
+        rAnalyser.getByteFrequencyData(freq);
+        for (let i = 0; i < barCount; i++) {
+          const fi = Math.floor(i / barCount * freq.length);
+          levels[i] = freq[fi] / 255;
+        }
+        hasFreq = true;
+      } else if (rMode === 2 && spectrumInit && analyser) {
+        const freq = new Uint8Array(analyser.frequencyBinCount);
+        analyser.getByteFrequencyData(freq);
+        for (let i = 0; i < barCount; i++) {
+          const fi = Math.floor(i / barCount * freq.length);
+          levels[i] = freq[fi] / 255;
+        }
+        hasFreq = true;
+      }
+
+      ctx.clearRect(0, 0, W, H);
+
+      // Left-high-right-low envelope
+      if (!rPeakEnv || rPeakEnv.length !== barCount) {
+        rPeakEnv = new Float32Array(barCount);
+        for (let i = 0; i < barCount; i++) {
+          const t = i / barCount;
+          rPeakEnv[i] = 1.0 - t * 0.4;
+        }
+      }
+
+      if (hasFreq) {
+        if (!rSmoothLevels || rSmoothLevels.length !== barCount) rSmoothLevels = new Float32Array(barCount);
+        for (let i = 0; i < barCount; i++) {
+          rSmoothLevels[i] += (levels[i] - rSmoothLevels[i]) * 0.08;
+        }
+        for (let i = 0; i < barCount; i++) {
+          const env = Math.max(0.08, rPeakEnv[i]);
+          const h = Math.max(1, Math.min(rSmoothLevels[i] * env * H * 0.65, H * 0.65));
+          const x = i * (barW + gap);
+          const y = H - h;
+          ctx.fillStyle = '#FFFFFF';
+          ctx.globalAlpha = 0.3 + rSmoothLevels[i] * 0.7;
+          ctx.fillRect(x, y, barW, h);
+        }
+      } else {
+        for (let i = 0; i < barCount; i++) {
+          const t = i / barCount;
+          const wave = 0.18
+            + Math.sin(t * 8.7 + now / 3000) * 0.10
+            + Math.sin(t * 14.3 + now / 4500) * 0.07
+            + Math.sin(t * 23.1 + now / 6000) * 0.05
+            + Math.cos(t * 5.2 + now / 3500) * 0.06
+            + Math.sin(t * 37.0 + now / 8000) * 0.04;
+          const h = Math.max(1, wave * H);
+          const x = i * (barW + gap);
+          const y = H - h;
+          ctx.fillStyle = '#FFFFFF';
+          ctx.globalAlpha = 0.25 + wave * 0.55;
+          ctx.fillRect(x, y, barW, h);
+        }
+      }
+
+      ctx.globalAlpha = 1;
+      // Also draw bottom waveform during idle (rMode 0)
+      if (rMode === 0) drawBottomWaveform();
+      rWaveformAnimId = requestAnimationFrame(drawReplayEdgeWaveform);
+    }
+
+    // ── Bottom Waveform (progress track) ──
+    const $bottomWaveform = document.getElementById('replay-bottom-waveform');
+    let rBottomBars = null;
+    let rBottomBarCount = 60;
+
+    function generateBottomBars(count) {
+      rBottomBarCount = count;
+      rBottomBars = new Float32Array(count);
+      for (let i = 0; i < count; i++) {
+        const t = i / count;
+        rBottomBars[i] = 0.2
+          + Math.sin(t * 12.3) * 0.15
+          + Math.sin(t * 27.7) * 0.10
+          + Math.cos(t * 8.1) * 0.12
+          + Math.random() * 0.15;
+      }
+    }
+
+    function drawBottomWaveform() {
+      const canvas = $bottomWaveform;
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+      if (canvas.width !== Math.round(rect.width * dpr)) {
+        canvas.width = Math.round(rect.width * dpr);
+        canvas.height = Math.round(rect.height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      const W = rect.width;
+      const H = rect.height;
+      const barW = 5;
+      const gap = 3;
+      const radius = 2.5;
+      const barCount = Math.floor(W / (barW + gap));
+
+      if (!rBottomBars || rBottomBars.length !== barCount) generateBottomBars(barCount);
+
+      // Determine progress
+      let progress = 0;
+      if (rMode === 1 && rAudio && rAudio.duration) {
+        progress = rAudio.currentTime / rAudio.duration;
+      } else if (rMode === 2 && $audio && $audio.duration) {
+        progress = $audio.currentTime / $audio.duration;
+      }
+
+      ctx.clearRect(0, 0, W, H);
+      const progressIdx = Math.floor(progress * barCount);
+
+      for (let i = 0; i < barCount; i++) {
+        const h = Math.max(4, rBottomBars[i % rBottomBars.length] * H);
+        const x = i * (barW + gap);
+        const y = (H - h) / 2;
+        if (i < progressIdx) {
+          ctx.fillStyle = '#0D0D0D';
+          ctx.globalAlpha = 0.85;
+        } else {
+          ctx.fillStyle = '#0D0D0D';
+          ctx.globalAlpha = 0.15;
+        }
+        ctx.beginPath();
+        ctx.roundRect(x, y, barW, h, radius);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    // Click to seek on bottom waveform (TTS only)
+    $bottomWaveform.addEventListener('click', (e) => {
+      const rect = $bottomWaveform.getBoundingClientRect();
+      const pct = (e.clientX - rect.left) / rect.width;
+      if (rAudio && rAudio.duration) {
+        rAudio.currentTime = pct * rAudio.duration;
+      }
+    });
+
+    // Top play button: controls music
+    function toggleMusicPlay() {
+      if (!$audio.src) return;
+      if ($audio.paused) {
+        $audio.play().catch(() => {});
+        $playBtn.textContent = '❚❚';
+      } else {
+        $audio.pause();
+        $playBtn.textContent = '▶';
+      }
+    }
+
+    // Bottom pause button: controls TTS, with replay
+    function toggleTtsPlay() {
+      // If TTS is playing, pause/resume it
+      if (rAudio && rMode === 1) {
+        if (rAudio.paused) {
+          // Resume TTS → fade music back down
+          if (rVolRestoreTimer) { clearTimeout(rVolRestoreTimer); rVolRestoreTimer = null; }
+          fadeVolume(0.12, 400);
+          rAudio.play().catch(() => {});
+          $bottomPause.textContent = '❚❚';
+        } else {
+          // Pause TTS → after 2s restore music volume
+          rAudio.pause();
+          $bottomPause.textContent = '▶';
+          if (rVolRestoreTimer) clearTimeout(rVolRestoreTimer);
+          rVolRestoreTimer = setTimeout(() => {
+            rVolRestoreTimer = null;
+            fadeVolume(rSavedVolume, 600);
+          }, 2000);
+        }
+        return;
+      }
+      // If TTS ended (rMode === 0) and we have text, replay TTS
+      if (rMode === 0 && rTtsText) {
+        replayTts();
+        return;
+      }
+    }
+
+    function replayTts() {
+      // Clean up old audio
+      if (rAudio) { rAudio.pause(); rAudio = null; }
+      if (rAudioCtx) { rAudioCtx.close().catch(() => {}); rAudioCtx = null; }
+      if (rSyncAnimId) { cancelAnimationFrame(rSyncAnimId); rSyncAnimId = null; }
+
+      $bottomPause.textContent = '❚❚';
+      $speaking.textContent = '• Speaking...';
+      $bottomTime.textContent = '0:00';
+
+      // Re-render transcript with words
+      rWords = [];
+      renderChatTranscript(rChatMsgs);
+
+      fetch('/api/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: rTtsText }),
+      })
+        .then(r => r.json())
+        .then(({ audioBase64, words }) => {
+          if (!audioBase64) return;
+          rWords = words;
+          renderChatTranscriptWithWords(rChatMsgs, words);
+          return fetch(`data:audio/mp3;base64,${audioBase64}`).then(r => r.blob());
+        })
+        .then(blob => {
+          if (!blob) return;
+          rAudio = new Audio(URL.createObjectURL(blob));
+          rAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          const src = rAudioCtx.createMediaElementSource(rAudio);
+          rAnalyser = rAudioCtx.createAnalyser();
+          rAnalyser.fftSize = 256;
+          src.connect(rAnalyser);
+          rAnalyser.connect(rAudioCtx.destination);
+
+          rAudio.play();
+          rMode = 1;
+          startSync();
+
+          rAudio.addEventListener('ended', () => {
+            if (rAudioCtx) { rAudioCtx.close().catch(() => {}); rAudioCtx = null; }
+            rAnalyser = null;
+            rWords = [];
+            rAudio = null;
+            rMode = 0;
+            $bottomPause.textContent = '▶';
+            $speaking.textContent = '• Now Playing';
+          }, { once: true });
+        })
+        .catch(() => {
+          $bottomPause.textContent = '▶';
+        });
+    }
+
+    $playBtn.addEventListener('click', toggleMusicPlay);
+    $bottomPause.addEventListener('click', toggleTtsPlay);
+
+    $closeBtn.addEventListener('click', () => {
+      stopReplay(true);
+      $overlay.classList.remove('open');
+    });
+
+    $overlay.addEventListener('click', (e) => {
+      if (e.target === $overlay) {
+        stopReplay(true);
+        $overlay.classList.remove('open');
+      }
+    });
+
+    // ═══════════════════════════════════════
+    //  REPLAY Button
+    // ═══════════════════════════════════════
+    function addReplayBtn(bottomEl, userText, assistantText) {
+      const btn = document.createElement('span');
+      btn.className = 'replay-btn';
+      btn.innerHTML = '▶ REPLAY';
+      btn.addEventListener('click', () => {
+        openDetailModal(playerState.currentTrack, userText, assistantText);
+      });
+      bottomEl.appendChild(btn);
+    }
+
+    $sendBtn.addEventListener('click', sendMessage);
+    $input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.isComposing) sendMessage();
+    });
+
+    function setSending(v) {
+      sending = v;
+      $sendBtn.disabled = v;
+      $input.disabled = v;
+      if (!v) $input.focus();
+    }
+
+    // ═══════════════════════════════════════
+    //  Theme Toggle
+    // ═══════════════════════════════════════
+    function applyTheme(mode) {
+      document.body.classList.toggle('light', mode === 'light');
+      $themeToggle.querySelectorAll('.theme-opt').forEach(el => {
+        el.classList.toggle('active', el.dataset.mode === mode);
+      });
+      localStorage.setItem('claudio-theme', mode);
+    }
+    $themeToggle.addEventListener('click', (e) => {
+      const opt = e.target.closest('.theme-opt');
+      if (opt) applyTheme(opt.dataset.mode);
+    });
+    applyTheme(localStorage.getItem('claudio-theme') || 'dark');
+
+    // ═══════════════════════════════════════
+    //  Proactive Narration (SSE)
+    // ═══════════════════════════════════════
+    function connectStream() {
+      const es = new EventSource('/api/stream');
+      es.onmessage = (e) => {
+        try {
+          const data = JSON.parse(e.data);
+          if (data.type === 'text' && data.content) {
+            appendMsg('assistant', data.content);
+          }
+        } catch {}
+      };
+      es.onerror = () => {
+        es.close();
+        setTimeout(connectStream, 30000);
+      };
+    }
+    connectStream();
+
+    // ═══════════════════════════════════════
+    //  Auto Intro（固定开场白 + 推荐一首歌 + AI介绍）
+    // ═══════════════════════════════════════
+    setTimeout(() => {
+      const introMsg = appendMsg('assistant', '');
+      const $introEl = introMsg.bubble;
+
+      $introEl.innerHTML = '<span class="loading-dots"><span></span><span></span><span></span></span>';
+
+      let introSong = null;
+      let introDesc = '';
+
+      const introStream = new ClaudioStream();
+      introStream.send('推荐一首歌，然后用一句话简短介绍这首歌的风格或意境。不要说歌名，只写那一句介绍。', {
+        onChar(ch) {
+          introDesc += ch;
+        },
+        onToolCalls() {},
+        onToolResult() {},
+        onPlay(song) {
+          introSong = song;
+          // 播放
+          playerState.play(song);
+          // 只展示一首推荐卡片
+          const wrapper = document.createElement('div');
+          wrapper.className = 'message assistant';
+          const avatar = document.createElement('img');
+          avatar.className = 'chat-avatar';
+          avatar.src = 'mike.jpg';
+          avatar.alt = 'C';
+          wrapper.appendChild(avatar);
+          $chatWindow.appendChild(wrapper);
+          renderMusicCardList([song], wrapper);
+          const np = document.createElement('div');
+          np.className = 'connection-text';
+          np.textContent = `Now playing: ${song.title} — ${song.artist || '—'}`;
+          $chatWindow.appendChild(np);
+        },
+        onDone() {
+          // 拼接固定开场白 + AI介绍
+          const songName = introSong?.title || '这首';
+          const artistName = introSong?.artist || '';
+          let desc = introDesc.trim();
+          // 清理：移除歌名、艺人名、《》、引号、前导标点
+          desc = desc.replace(/《[^》]*》/g, '');
+          if (songName) desc = desc.replace(new RegExp(songName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), '');
+          if (artistName) desc = desc.replace(new RegExp(artistName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), '');
+          desc = desc.replace(/^[，。,.\s]+/, '').replace(/[，。,.\s]+$/, '').trim();
+          const introText = `我是Claudio。很高兴在赛博世界的这个角落遇见你。代码和网格是我的身体，但流淌在我和你之间的音频，是热的。不用在对话框里拘束。接下来这首歌《${songName}》${desc ? '，' + desc : ''}，放给你听。`;
+          $introEl.textContent = introText;
+          addReplayBtn(introMsg.bottom, '', introText);
+          scrollChat();
+        },
+        onError() {
+          $introEl.textContent = '...';
+        },
+      });
+    }, 800);
+
+    // ═══════════════════════════════════════
+    //  Mood system
+    // ═══════════════════════════════════════
+    let moodTimer = null;
+    function applyMood(mood) {
+      document.body.classList.remove('mood-sad','mood-anxious','mood-calm','mood-happy','mood-melancholy','mood-energetic');
+      if (mood) document.body.classList.add(`mood-${mood}`);
+      clearTimeout(moodTimer);
+      moodTimer = setTimeout(() => {
+        document.body.classList.remove('mood-sad','mood-anxious','mood-calm','mood-happy','mood-melancholy','mood-energetic');
+      }, 10000);
+    }
+
+    // ═══════════════════════════════════════
+    //  Speech Recognition
+    // ═══════════════════════════════════════
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+    let isListening = false;
+
+    if (SpeechRecognition) {
+      recognition = new SpeechRecognition();
+      recognition.lang = 'zh-CN';
+      recognition.continuous = false;
+      recognition.interimResults = true;
+
+      recognition.onstart = () => {
+        isListening = true;
+        $micBtn.classList.add('recording');
+        $input.placeholder = '正在聆听...';
+      };
+
+      recognition.onresult = (e) => {
+        let transcript = '';
+        for (let i = 0; i < e.results.length; i++) {
+          transcript += e.results[i][0].transcript;
+        }
+        $input.value = transcript;
+      };
+
+      recognition.onend = () => {
+        isListening = false;
+        $micBtn.classList.remove('recording');
+        $input.placeholder = 'Say something to the DJ...';
+        if ($input.value.trim()) {
+          sendMessage();
+        }
+      };
+
+      recognition.onerror = (e) => {
+        isListening = false;
+        $micBtn.classList.remove('recording');
+        $input.placeholder = 'Say something to the DJ...';
+        if (e.error === 'not-allowed') {
+          appendMsg('tool', 'ERROR: 需要麦克风权限');
+        }
+      };
+    }
+
+    $micBtn.addEventListener('click', () => {
+      if (!recognition) {
+        appendMsg('tool', 'ERROR: 浏览器不支持语音识别');
+        return;
+      }
+      if (isListening) {
+        recognition.stop();
+      } else {
+        $input.value = '';
+        recognition.start();
+      }
+    });
+
+    $input.focus();
+
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+  </script>
+</body>
+</html>

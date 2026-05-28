@@ -1,0 +1,18 @@
+{
+  "short_name": "Claudio",
+  "name": "Claudio AI Radio",
+  "description": "AI-powered personal radio station",
+  "icons": [
+    {
+      "src": "mike.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#0D0D0D",
+  "background_color": "#0D0D0D"
+}

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claudio — Song Detail</title>
+  <link rel="stylesheet" href="/fonts/ibm-plex-mono/400.css">
+  <link rel="stylesheet" href="/fonts/ibm-plex-mono/700.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="detail-page">
+
+  <div class="detail-container">
+    <!-- Back button -->
+    <a href="/" class="detail-back">← BACK</a>
+
+    <!-- Cover -->
+    <div class="detail-cover-lg" id="cover"></div>
+
+    <!-- Info -->
+    <div class="detail-meta">
+      <h1 class="detail-title-lg" id="title">—</h1>
+      <p class="detail-artist-lg" id="artist">—</p>
+      <p class="detail-album-lg" id="album">—</p>
+    </div>
+
+    <!-- Lyrics area -->
+    <div class="detail-lyrics" id="lyrics">
+      <div class="lyrics-loading">LOADING LYRICS...</div>
+    </div>
+  </div>
+
+  <script>
+    const data = JSON.parse(localStorage.getItem('claudio-song-detail') || '{}');
+
+    document.getElementById('title').textContent = data.title || '—';
+    document.getElementById('artist').textContent = data.artist || '—';
+    document.getElementById('album').textContent = data.album || '';
+
+    const cover = document.getElementById('cover');
+    if (data.cover) {
+      cover.style.backgroundImage = `url(${data.cover})`;
+      cover.classList.add('has-cover');
+    }
+
+    // Fetch lyrics if we have a song ID
+    if (data.id) {
+      fetch(`/api/lyric?id=${data.id}`)
+        .then(r => r.json())
+        .then(res => {
+          const lyricsEl = document.getElementById('lyrics');
+          if (res.lyric) {
+            const lines = res.lyric.split('\n').filter(l => l.trim());
+            lyricsEl.innerHTML = lines.map(l => {
+              // Remove timestamp [00:00.00]
+              const text = l.replace(/\[[\d:.]+\]\s*/g, '');
+              return text ? `<p class="lyric-line">${text}</p>` : '';
+            }).join('');
+          } else {
+            lyricsEl.innerHTML = '<p class="lyrics-empty">暂无歌词</p>';
+          }
+        })
+        .catch(() => {
+          document.getElementById('lyrics').innerHTML = '<p class="lyrics-empty">暂无歌词</p>';
+        });
+    }
+  </script>
+</body>
+</html>
